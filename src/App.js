@@ -5,13 +5,14 @@ function App() {
   // Dummy data for property listings with extended parameters
 
   // Your Personal Info - UPDATE THESE FIELDS!
-const yourName = "Basem Al Sal";
+const yourName = "Basem Al Salahiiii4";
 const socialLinks = {
   linkedin: "https://www.linkedin.com/in/basem-alsalahi/", // Replace with your LinkedIn URL
   youtube: "https://youtube.com/@basemdubiarealestateinsights?si=OhOdmmSgbLiw9Bfw",     // Replace with your YouTube URL
   instagram: "https://www.instagram.com/basemrealestatedxb/",  // Replace with your Instagram URL
   tiktok: "https://www.tiktok.com/@basemrealestate",       // Replace with your TikTok URL
 };
+
   const initialListings = [
     {
       id: '1',
