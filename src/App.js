@@ -157,6 +157,7 @@ const socialLinks = {
       <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6 shadow-lg rounded-b-xl">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <h1 className="text-4xl font-extrabold mb-4 md:mb-0">
+            <span className="block">Basem Al Salahi</span>
             <span className="block">Dubai Property Listings</span>
             <span className="block text-xl font-light opacity-80">For Agents</span>
           </h1>
