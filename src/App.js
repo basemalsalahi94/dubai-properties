@@ -3,8 +3,8 @@ import './index.css'; // Ensure this is imported for Tailwind CSS if you have it
 
 // --- START: CONTENTFUL API CONFIGURATION ---
 // IMPORTANT: Replace with your actual Contentful Space ID and Access Token
-const CONTENTFUL_SPACE_ID = 'YOUR_CONTENTFUL_SPACE_ID'; // e.g., 'abcdefg123hijk'
-const CONTENTFUL_ACCESS_TOKEN = 'YOUR_CONTENTFUL_ACCESS_TOKEN'; // e.g., 'xyzABC123_456def'
+const CONTENTFUL_SPACE_ID = 'irpa9m1etdq6'; // e.g., 'abcdefg123hijk'
+const CONTENTFUL_ACCESS_TOKEN = 'ALd4e2VZj9_V3bVXpxIVCbjvrz1uBQEIH9IBhElroS4'; // e.g., 'xyzABC123_456def'
 
 const CONTENTFUL_API_URL = `https://cdn.contentful.com/spaces/${CONTENTFUL_SPACE_ID}/environments/master/entries?access_token=${CONTENTFUL_ACCESS_TOKEN}&content_type=property`;
 // --- END: CONTENTFUL API CONFIGURATION ---
