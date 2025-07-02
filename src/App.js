@@ -1,309 +1,205 @@
 import React, { useState, useEffect } from 'react';
+import './index.css'; // Ensure this is imported for Tailwind CSS if you have it set up
 
-// Main App component
+// --- START: CONTENTFUL API CONFIGURATION ---
+// IMPORTANT: Replace with your actual Contentful Space ID and Access Token
+const CONTENTFUL_SPACE_ID = 'YOUR_CONTENTFUL_SPACE_ID'; // e.g., 'abcdefg123hijk'
+const CONTENTFUL_ACCESS_TOKEN = 'YOUR_CONTENTFUL_ACCESS_TOKEN'; // e.g., 'xyzABC123_456def'
+
+const CONTENTFUL_API_URL = `https://cdn.contentful.com/spaces/${CONTENTFUL_SPACE_ID}/environments/master/entries?access_token=${CONTENTFUL_ACCESS_TOKEN}&content_type=property`;
+// --- END: CONTENTFUL API CONFIGURATION ---
+
+const PropertyCard = ({ property }) => (
+  <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row mb-6">
+    <div className="md:w-1/3">
+      <img
+        src={property.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'}
+        alt={property.title}
+        className="w-full h-48 object-cover md:h-full"
+      />
+    </div>
+    <div className="p-4 md:w-2/3 flex flex-col justify-between">
+      <div>
+        <h3 className="text-xl font-bold text-gray-800 mb-2">{property.title}</h3>
+        <p className="text-gray-600 mb-1 flex items-center">
+          <i className="fas fa-map-marker-alt text-gray-500 mr-2"></i> {property.location}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-gray-700 text-sm mb-3">
+          <p className="flex items-center"><i className="fas fa-building text-gray-500 mr-2"></i> <strong>Developer:</strong> {property.developer}</p>
+          <p className="flex items-center"><i className="fas fa-project-diagram text-gray-500 mr-2"></i> <strong>Project:</strong> {property.project}</p>
+          <p className="flex items-center"><i className="fas fa-home text-gray-500 mr-2"></i> <strong>Type:</strong> {property.propertyType}</p>
+          <p className="flex items-center"><i className="fas fa-bed text-gray-500 mr-2"></i> <strong>Bedrooms:</strong> {property.bedrooms}</p>
+          <p className="flex items-center"><i className="fas fa-ruler-combined text-gray-500 mr-2"></i> <strong>Size:</strong> {property.size}</p>
+          <p className="flex items-center"><i className="fas fa-chart-area text-gray-500 mr-2"></i> <strong>Plot Size:</strong> {property.plotSize}</p>
+          <p className="flex items-center"><i className="fas fa-calendar-alt text-gray-500 mr-2"></i> <strong>Status:</strong> {property.readyOrOffPlan}</p>
+          <p className="flex items-center"><i className="fas fa-handshake text-gray-500 mr-2"></i> <strong>Handover:</strong> {property.handover}</p>
+          <p className="flex items-center"><i className="fas fa-tags text-gray-500 mr-2"></i> <strong>Purpose:</strong> {property.purposeOfListing}</p>
+          <p className="flex items-center"><i className="fas fa-couch text-gray-500 mr-2"></i> <strong>Furnished:</strong> {property.furnished ? 'Yes' : 'No'}</p> {/* Contentful returns boolean */}
+          <p className="flex items-center"><i className="fas fa-info-circle text-gray-500 mr-2"></i> <strong>Listing Status:</strong> {property.listingStatus}</p>
+        </div>
+        <p className="text-gray-700 text-sm mb-3">{property.notes}</p>
+      </div>
+      <div className="mt-auto text-right">
+        <p className="text-2xl font-bold text-indigo-700">{property.price}</p>
+      </div>
+    </div>
+  </div>
+);
+
 function App() {
-  // Dummy data for property listings with extended parameters
-
-  // Your Personal Info - UPDATE THESE FIELDS!
-const yourName = "Basem Al Salahiiii4";
-const socialLinks = {
-  linkedin: "https://www.linkedin.com/in/basem-alsalahi/", // Replace with your LinkedIn URL
-  youtube: "https://youtube.com/@basemdubiarealestateinsights?si=OhOdmmSgbLiw9Bfw",     // Replace with your YouTube URL
-  instagram: "https://www.instagram.com/basemrealestatedxb/",  // Replace with your Instagram URL
-  tiktok: "https://www.tiktok.com/@basemrealestate",       // Replace with your TikTok URL
-};
-
-  const initialListings = [
-    {
-      id: '1',
-      title: 'Luxurious 3-Bedroom Apartment',
-      location: 'Downtown Dubai',
-      developer: 'Emaar Properties',
-      project: 'Burj Vista',
-      propertyType: 'Apartment',
-      bedrooms: 3,
-      size: '2,200 sqft',
-      plotSize: 'N/A', // Not applicable for apartments
-      readyOrOffPlan: 'Ready',
-      handover: 'Immediately',
-      purposeOfListing: 'Sale',
-      price: 'AED 4,500,000',
-      furnished: 'Yes',
-      listingStatus: 'Available',
-      notes: 'Stunning views of Burj Khalifa, spacious living area, and modern amenities. High floor unit.',
-      imageUrl: 'https://placehold.co/600x400/A7F3D0/10B981?text=Downtown+Apt',
-    },
-    {
-      id: '2',
-      title: 'Modern 4-Bedroom Villa',
-      location: 'Arabian Ranches',
-      developer: 'Emaar Properties',
-      project: 'Arabian Ranches III',
-      propertyType: 'Villa',
-      bedrooms: 4,
-      size: '4,500 sqft',
-      plotSize: '6,000 sqft',
-      readyOrOffPlan: 'Ready',
-      handover: 'Immediately',
-      purposeOfListing: 'Sale',
-      price: 'AED 7,800,000',
-      furnished: 'No',
-      listingStatus: 'Available',
-      notes: 'Family-friendly villa with a private garden and community access. Close to park.',
-      imageUrl: 'https://placehold.co/600x400/FED7AA/EA580C?text=Arabian+Villa',
-    },
-    {
-      id: '3',
-      title: 'Off-Plan 2-Bedroom Apartment',
-      location: 'Dubai Marina',
-      developer: 'Select Group',
-      project: 'Marina Gate 2',
-      propertyType: 'Apartment',
-      bedrooms: 2,
-      size: '1,500 sqft',
-      plotSize: 'N/A',
-      readyOrOffPlan: 'Off-Plan Resale',
-      handover: 'Q4 2025',
-      purposeOfListing: 'Sale',
-      price: 'AED 2,800,000',
-      furnished: 'No',
-      listingStatus: 'Available',
-      notes: 'Prime location with excellent investment potential, close to metro and JBR beach.',
-      imageUrl: 'https://placehold.co/600x400/BFDBFE/2563EB?text=Marina+Apt',
-    },
-    {
-      id: '4',
-      title: 'Spacious 5-Bedroom Villa',
-      location: 'Palm Jumeirah',
-      developer: 'Nakheel',
-      project: 'Signature Villas',
-      propertyType: 'Villa',
-      bedrooms: 5,
-      size: '8,000 sqft',
-      plotSize: '10,000 sqft',
-      readyOrOffPlan: 'Ready',
-      handover: 'Immediately',
-      purposeOfListing: 'Sale',
-      price: 'AED 25,000,000',
-      furnished: 'Yes',
-      listingStatus: 'Available',
-      notes: 'Exclusive beachfront property with private beach access and luxury finishes. Private pool.',
-      imageUrl: 'https://placehold.co/600x400/D1FAE5/047857?text=Palm+Villa',
-    },
-    {
-      id: '5',
-      title: 'Off-Plan Studio Apartment',
-      location: 'Jumeirah Village Circle (JVC)',
-      developer: 'Danube Properties',
-      project: 'Elz Residence',
-      propertyType: 'Studio',
-      bedrooms: 0,
-      size: '450 sqft',
-      plotSize: 'N/A',
-      readyOrOffPlan: 'Off-Plan Resale',
-      handover: 'Q2 2026',
-      purposeOfListing: 'Sale',
-      price: 'AED 750,000',
-      furnished: 'No',
-      listingStatus: 'Available',
-      notes: 'Compact and efficient studio, ideal for investors or young professionals. High ROI potential.',
-      imageUrl: 'https://placehold.co/600x400/FFEDD5/D97706?text=JVC+Studio',
-    },
-    {
-      id: '6',
-      title: '4-Bedroom Townhouse',
-      location: 'Damac Hills 2',
-      developer: 'DAMAC Properties',
-      project: 'Akoya Oxygen',
-      propertyType: 'Townhouse',
-      bedrooms: 4,
-      size: '2,500 sqft',
-      plotSize: '3,000 sqft',
-      readyOrOffPlan: 'Ready',
-      handover: 'Immediately',
-      purposeOfListing: 'Sale',
-      price: 'AED 1,900,000',
-      furnished: 'No',
-      listingStatus: 'Available',
-      notes: 'Modern townhouse in a vibrant community with excellent amenities. Golf course access.',
-      imageUrl: 'https://placehold.co/600x400/E0F2FE/3B82F6?text=Damac+Townhouse',
-    },
-  ];
-
-  const [listings, setListings] = useState(initialListings);
+  const [listings, setListings] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterReadyOrOffPlan, setFilterReadyOrOffPlan] = useState('All'); // 'All', 'Ready', 'Off-Plan Resale'
+  const [filterStatus, setFilterStatus] = useState('All'); // For 'Ready' or 'Off-Plan Resale'
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Effect to filter listings based on search term and type
   useEffect(() => {
-    let filtered = initialListings.filter(listing =>
+    const fetchListings = async () => {
+      try {
+        const response = await fetch(CONTENTFUL_API_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Process Contentful data to match our component's expected structure
+        const fetchedListings = data.items.map(item => {
+          const fields = item.fields;
+          const imageUrl = data.includes.Asset.find(
+            asset => asset.sys.id === fields.image.sys.id
+          )?.fields.file.url;
+
+          return {
+            id: item.sys.id, // Contentful's unique ID for the entry
+            title: fields.title,
+            location: fields.location,
+            developer: fields.developer,
+            project: fields.project,
+            propertyType: fields.propertyType,
+            bedrooms: fields.bedrooms,
+            size: fields.size,
+            plotSize: fields.plotSize,
+            readyOrOffPlan: fields.readyOrOffPlan,
+            handover: fields.handover,
+            purposeOfListing: fields.purposeOfListing,
+            price: fields.price,
+            furnished: fields.furnished,
+            listingStatus: fields.listingStatus,
+            notes: fields.notes,
+            imageUrl: imageUrl ? `https:${imageUrl}` : 'https://via.placeholder.com/400x300?text=No+Image', // Prepend https: for full URL
+          };
+        });
+        setListings(fetchedListings);
+      } catch (e) {
+        console.error("Error fetching data from Contentful:", e);
+        setError("Failed to load listings. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, []); // Empty dependency array means this runs once on component mount
+
+  const filteredListings = listings.filter(listing => {
+    const matchesSearch = searchTerm === '' ||
       listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       listing.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
       listing.developer.toLowerCase().includes(searchTerm.toLowerCase()) ||
       listing.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      listing.notes.toLowerCase().includes(searchTerm.toLowerCase())
+      listing.notes.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus = filterStatus === 'All' || listing.readyOrOffPlan === filterStatus;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-xl text-gray-700">Loading listings...</p>
+      </div>
     );
+  }
 
-    if (filterReadyOrOffPlan !== 'All') {
-      filtered = filtered.filter(listing => listing.readyOrOffPlan === filterReadyOrOffPlan);
-    }
-
-    setListings(filtered);
-  }, [searchTerm, filterReadyOrOffPlan]); // Re-run effect when search term or filter type changes
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-xl text-red-600">{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans text-gray-800 flex flex-col">
-      {/* Header Section */}
-      <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6 shadow-lg rounded-b-xl">
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-indigo-700 text-white p-6 shadow-md">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-          <h1 className="text-4xl font-extrabold mb-4 md:mb-0">
-            <span className="block">Basem Al Salahi</span>
-            <span className="block">Dubai Property Listings</span>
-            <span className="block text-xl font-light opacity-80">For Agents</span>
-          </h1>
-          <nav className="text-lg">
-            <ul className="flex space-x-6">
-              <li>
-                <a href="#" className="hover:text-blue-200 transition duration-300">Home</a>
-              </li>
-              <li>
-                <a href="#listings" className="hover:text-blue-200 transition duration-300">Listings</a>
-              </li>
-              <li>
-                <a href="#contact" className="hover:text-blue-200 transition duration-300">Contact</a>
-              </li>
-            </ul>
+          <h1 className="text-3xl font-extrabold mb-4 md:mb-0">Dubai Property Listings</h1>
+          <nav className="space-x-4">
+            <a href="#listings" className="hover:underline">Listings</a>
+            <a href="#contact" className="hover:underline">Contact</a>
           </nav>
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="container mx-auto p-6 flex-grow">
-        {/* Search and Filter Section */}
-        <section className="bg-white p-6 rounded-xl shadow-md mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-blue-700">Find Your Next Listing</h2>
-          <div className="flex flex-col md:flex-row gap-4">
+      <main className="container mx-auto p-6">
+        <section id="listings" className="mb-10">
+          <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Available Properties</h2>
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <input
               type="text"
               placeholder="Search by title, location, developer, project, or notes..."
-              className="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+              className="p-3 border border-gray-300 rounded-lg flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <select
-              className="p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-              value={filterReadyOrOffPlan}
-              onChange={(e) => setFilterReadyOrOffPlan(e.target.value)}
+              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
             >
-              <option value="All">All Properties</option>
-              <option value="Ready">Ready Properties</option>
+              <option value="All">All Statuses</option>
+              <option value="Ready">Ready</option>
               <option value="Off-Plan Resale">Off-Plan Resale</option>
             </select>
           </div>
+          <div className="grid grid-cols-1">
+            {filteredListings.length > 0 ? (
+              filteredListings.map(listing => (
+                <PropertyCard key={listing.id} property={listing} />
+              ))
+            ) : (
+              <p className="text-center text-gray-600 text-lg">No properties found matching your criteria.</p>
+            )}
+          </div>
         </section>
 
-        {/* Property Listings Section */}
-        <section id="listings" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {listings.length > 0 ? (
-            listings.map(listing => (
-              <PropertyCard key={listing.id} listing={listing} />
-            ))
-          ) : (
-            <p className="text-center text-xl text-gray-600 col-span-full py-10">No listings found matching your criteria.</p>
-          )}
-        </section>
-
-        {/* Contact Section */}
-        <section id="contact" className="bg-white p-8 rounded-xl shadow-md mt-12 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-blue-700">Connect with Me</h2>
-          <p className="text-lg mb-4">
-            As a licensed property consultant in Dubai, I am dedicated to helping agents find the perfect properties for their clients.
+        <section id="contact" className="bg-white p-8 rounded-lg shadow-lg text-center">
+          <h2 className="text-3xl font-semibold text-gray-800 mb-4">Get in Touch</h2>
+          <p className="text-gray-600 mb-4">
+            As a licensed property consultant in Dubai, I'm here to help you with your real estate needs.
           </p>
-          <p className="text-lg mb-6">
-            For more details on any listing or to discuss potential collaborations, please don't hesitate to reach out.
-          </p>
-          <div className="flex flex-col items-center space-y-4">
-            <a
-              href="mailto:your.email@example.com" // Replace with your actual email
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
-            >
+          <div className="flex justify-center space-x-6 text-xl">
+            <a href="mailto:your.email@example.com" className="text-indigo-600 hover:text-indigo-800 flex items-center">
               <i className="fas fa-envelope mr-2"></i> Email Me
             </a>
-            <a
-              href="tel:+971501234567" // Replace with your actual phone number
-              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
-            >
-              <i className="fas fa-phone-alt mr-2"></i> Call Me
+            <a href="tel:+971501234567" className="text-indigo-600 hover:text-indigo-800 flex items-center">
+              <i className="fas fa-phone mr-2"></i> Call Me
             </a>
-            <p className="text-sm text-gray-500 mt-4">
-              (Please replace placeholder contact details with your own)
-            </p>
           </div>
+          <p className="text-sm text-gray-500 mt-4">
+            Remember to replace placeholder contact details with your actual information.
+          </p>
         </section>
       </main>
 
-      {/* Footer Section */}
-      <footer className="bg-gray-800 text-white p-6 text-center mt-8 rounded-t-xl">
+      <footer className="bg-gray-800 text-white p-4 text-center mt-10">
         <div className="container mx-auto">
           <p>&copy; {new Date().getFullYear()} Dubai Property Listings. All rights reserved.</p>
-          <p className="text-sm mt-2">Powered by [Your Name/Company Name]</p>
         </div>
       </footer>
     </div>
   );
 }
 
-// Property Card Component
-function PropertyCard({ listing }) {
-  return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-103 hover:shadow-xl">
-      <img
-        src={listing.imageUrl}
-        alt={listing.title}
-        className="w-full h-48 object-cover"
-        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/600x400/E0F2FE/3B82F6?text=Image+Not+Found'; }} // Fallback image
-      />
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-blue-700 mb-2">{listing.title}</h3>
-        <p className="text-gray-600 mb-1 flex items-center">
-          <i className="fas fa-map-marker-alt mr-2 text-blue-500"></i> {listing.location}
-        </p>
-        <p className="text-gray-600 mb-1 flex items-center">
-          <i className="fas fa-building mr-2 text-purple-500"></i> {listing.developer} - {listing.project}
-        </p>
-        <p className="text-2xl font-extrabold text-green-600 mb-3">{listing.price}</p>
-
-        <div className="grid grid-cols-2 gap-2 text-sm text-gray-700 mb-4">
-          <p className="flex items-center"><i className="fas fa-home mr-2 text-blue-500"></i> {listing.propertyType}</p>
-          <p className="flex items-center"><i className="fas fa-bed mr-2 text-purple-500"></i> {listing.bedrooms} Beds</p>
-          <p className="flex items-center"><i className="fas fa-ruler-combined mr-2 text-orange-500"></i> Size: {listing.size}</p>
-          {listing.plotSize !== 'N/A' && (
-            <p className="flex items-center"><i className="fas fa-vector-square mr-2 text-green-500"></i> Plot: {listing.plotSize}</p>
-          )}
-          <p className={`font-semibold ${listing.readyOrOffPlan === 'Ready' ? 'text-green-700' : 'text-yellow-700'} flex items-center`}>
-            <i className={`fas ${listing.readyOrOffPlan === 'Ready' ? 'fa-check-circle' : 'fa-hourglass-half'} mr-2`}></i> {listing.readyOrOffPlan}
-          </p>
-          {listing.handover && (
-            <p className="flex items-center"><i className="fas fa-calendar-alt mr-2 text-indigo-500"></i> Handover: {listing.handover}</p>
-          )}
-          <p className="flex items-center"><i className="fas fa-tag mr-2 text-red-500"></i> Purpose: {listing.purposeOfListing}</p>
-          <p className="flex items-center"><i className="fas fa-couch mr-2 text-brown-500"></i> Furnished: {listing.furnished}</p>
-          <p className="flex items-center"><i className="fas fa-info-circle mr-2 text-gray-500"></i> Status: {listing.listingStatus}</p>
-        </div>
-        <p className="text-gray-700 text-sm mb-4 line-clamp-3">{listing.notes}</p>
-        <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
-          View Details
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// Ensure Tailwind CSS is loaded
-// Make sure to include this script tag in your HTML file if running outside of Canvas
-// <script src="https://cdn.tailwindcss.com"></script>
-// For icons, Font Awesome is used. Include this in your HTML:
-// <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-
-// Export the App component as default
 export default App;
