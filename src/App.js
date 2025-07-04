@@ -26,17 +26,17 @@ const PropertyCard = ({ property }) => (
           <i className="fas fa-map-marker-alt text-gray-500 mr-2"></i> {property.location}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-gray-700 text-sm mb-3">
-          <p className="flex items-center"><i className="fas fa-building text-gray-500 mr-2"></i> <strong>Developer:</strong> {property.developer}</p>
-          <p className="flex items-center"><i className="fas fa-project-diagram text-gray-500 mr-2"></i> <strong>Project:</strong> {property.project}</p>
-          <p className="flex items-center"><i className="fas fa-home text-gray-500 mr-2"></i> <strong>Type:</strong> {property.propertyType}</p>
-          <p className="flex items-center"><i className="fas fa-bed text-gray-500 mr-2"></i> <strong>Bedrooms:</strong> {property.bedrooms}</p>
-          <p className="flex items-center"><i className="fas fa-ruler-combined text-gray-500 mr-2"></i> <strong>Size:</strong> {property.size}</p>
-          <p className="flex items-center"><i className="fas fa-chart-area text-gray-500 mr-2"></i> <strong>Plot Size:</strong> {property.plotSize}</p>
-          <p className="flex items-center"><i className="fas fa-calendar-alt text-gray-500 mr-2"></i> <strong>Status:</strong> {property.readyOrOffPlan}</p>
-          <p className="flex items-center"><i className="fas fa-handshake text-gray-500 mr-2"></i> <strong>Handover:</strong> {property.handover}</p>
-          <p className="flex items-center"><i className="fas fa-tags text-gray-500 mr-2"></i> <strong>Purpose:</strong> {property.purposeOfListing}</p>
-          <p className="flex items-center"><i className="fas fa-couch text-gray-500 mr-2"></i> <strong>Furnished:</strong> {property.furnished ? 'Yes' : 'No'}</p>
-          <p className="flex items-center"><i className="fas fa-info-circle text-gray-500 mr-2"></i> <strong>Listing Status:</strong> {property.listingStatus}</p>
+          <p className="flex items-center"><i className="fas fa-building text-gray-500 mr-2"></i> <strong>Developer: </strong> {property.developer}</p>
+          <p className="flex items-center"><i className="fas fa-project-diagram text-gray-500 mr-2"></i> <strong>Project: </strong> {property.project}</p>
+          <p className="flex items-center"><i className="fas fa-home text-gray-500 mr-2"></i> <strong>Type: </strong> {property.propertyType}</p>
+          <p className="flex items-center"><i className="fas fa-bed text-gray-500 mr-2"></i> <strong>Bedrooms: </strong> {property.bedrooms}</p>
+          <p className="flex items-center"><i className="fas fa-ruler-combined text-gray-500 mr-2"></i> <strong>Size: </strong> {property.size}</p>
+          <p className="flex items-center"><i className="fas fa-chart-area text-gray-500 mr-2"></i> <strong>Plot Size: </strong> {property.plotSize}</p>
+          <p className="flex items-center"><i className="fas fa-calendar-alt text-gray-500 mr-2"></i> <strong>Status: </strong> {property.readyOrOffPlan}</p>
+          <p className="flex items-center"><i className="fas fa-handshake text-gray-500 mr-2"></i> <strong>Handover: </strong> {property.handover}</p>
+          <p className="flex items-center"><i className="fas fa-tags text-gray-500 mr-2"></i> <strong>Purpose: </strong> {property.purposeOfListing}</p>
+          <p className="flex items-center"><i className="fas fa-couch text-gray-500 mr-2"></i> <strong>Furnished: </strong> {property.furnished ? 'Yes' : 'No'}</p>
+          <p className="flex items-center"><i className="fas fa-info-circle text-gray-500 mr-2"></i> <strong>Listing Status: </strong> {property.listingStatus}</p>
         </div>
         <p className="text-gray-700 text-sm mb-3">{property.notes}</p>
       </div>
@@ -51,8 +51,6 @@ function App() {
   const [listings, setListings] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
-  const [minPrice, setMinPrice] = useState(''); // New state for min price
-  const [maxPrice, setMaxPrice] = useState(''); // New state for max price
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -85,9 +83,7 @@ function App() {
             readyOrOffPlan: fields.readyOrOffPlan,
             handover: fields.handover,
             purposeOfListing: fields.purposeOfListing,
-            // Parse price to a number for filtering, remove non-numeric characters
-            price: fields.price, // Keep original string for display
-            numericPrice: parseFloat(fields.price.replace(/[^0-9.]/g, '')), // For filtering
+            price: fields.price,
             furnished: fields.furnished,
             listingStatus: fields.listingStatus,
             notes: fields.notes,
@@ -97,7 +93,7 @@ function App() {
         setListings(fetchedListings);
       } catch (e) {
         console.error("Error fetching data from Contentful:", e);
-        setError("Failed to load listings. Please try again later. Check your Contentful API keys and ensure you have published entries.");
+        setError("Failed to load listings. Please try again later. Check your Contentful API keys.");
       } finally {
         setLoading(false);
       }
@@ -123,14 +119,7 @@ function App() {
 
     const matchesStatus = filterStatus === 'All' || listing.readyOrOffPlan === filterStatus;
 
-    // Price filtering logic
-    const numericMinPrice = parseFloat(minPrice);
-    const numericMaxPrice = parseFloat(maxPrice);
-
-    const matchesMinPrice = isNaN(numericMinPrice) || listing.numericPrice >= numericMinPrice;
-    const matchesMaxPrice = isNaN(numericMaxPrice) || listing.numericPrice <= numericMaxPrice;
-
-    return matchesSearch && matchesStatus && matchesMinPrice && matchesMaxPrice;
+    return matchesSearch && matchesStatus;
   });
 
   if (loading) {
@@ -156,21 +145,21 @@ function App() {
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="flex flex-col items-center md:items-start mb-4 md:mb-0">
             <h1 className="text-3xl font-extrabold">Dubai Property Listings</h1>
-            <p className="text-lg mt-1">By [Your Name Here]</p> {/* Add your name here */}
+            <p className="text-lg mt-1">By Basem Al Salahi</p> {/* Add your name here */}
           </div>
           <nav className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
             <div className="flex space-x-4 text-2xl">
               {/* Social Media Icons */}
-              <a href="https://www.instagram.com/your_instagram_handle" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://www.instagram.com/basemrealestatedxb/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
                 <i className="fab fa-instagram"></i>
               </a>
-              <a href="https://www.tiktok.com/@your_tiktok_handle" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://www.tiktok.com/@basemrealestate" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
                 <i className="fab fa-tiktok"></i>
               </a>
-              <a href="https://www.linkedin.com/in/your_linkedin_profile" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://www.linkedin.com/in/basem-alsalahi/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
                 <i className="fab fa-linkedin"></i>
               </a>
-              <a href="https://www.youtube.com/your_youtube_channel" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://youtube.com/@basemdubiarealestateinsights?si=2EISgPZgjNL7IKmR" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
                 <i className="fab fa-youtube"></i>
               </a>
             </div>
@@ -185,11 +174,11 @@ function App() {
       <main className="container mx-auto p-6">
         <section id="listings" className="mb-10">
           <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Available Properties</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <input
               type="text"
               placeholder="Search by title, location, developer, project, or notes..."
-              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 col-span-full md:col-span-1"
+              className="p-3 border border-gray-300 rounded-lg flex-grow shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -200,22 +189,8 @@ function App() {
             >
               <option value="All">All Statuses</option>
               <option value="Ready">Ready</option>
-              <option value="Off-plan">Off-plan</option>
+              <option value="Off-plan">Off-plan</option> {/* Changed from 'Off-Plan Resale' */}
             </select>
-            <input
-              type="number"
-              placeholder="Min Price"
-              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Max Price"
-              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-            />
           </div>
           <div className="grid grid-cols-1">
             {filteredListings.length > 0 ? (
