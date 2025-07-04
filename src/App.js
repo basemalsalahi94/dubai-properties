@@ -26,17 +26,17 @@ const PropertyCard = ({ property }) => (
           <i className="fas fa-map-marker-alt text-gray-500 mr-2"></i> {property.location}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-gray-700 text-sm mb-3">
-          <p className="flex items-center"><i className="fas fa-building text-gray-500 mr-2"></i> <strong>Developer:</strong> {property.developer}</p>
-          <p className="flex items-center"><i className="fas fa-project-diagram text-gray-500 mr-2"></i> <strong>Project:</strong> {property.project}</p>
-          <p className="flex items-center"><i className="fas fa-home text-gray-500 mr-2"></i> <strong>Type:</strong> {property.propertyType}</p>
-          <p className="flex items-center"><i className="fas fa-bed text-gray-500 mr-2"></i> <strong>Bedrooms:</strong> {property.bedrooms}</p>
-          <p className="flex items-center"><i className="fas fa-ruler-combined text-gray-500 mr-2"></i> <strong>Size:</strong> {property.size}</p>
-          <p className="flex items-center"><i className="fas fa-chart-area text-gray-500 mr-2"></i> <strong>Plot Size:</strong> {property.plotSize}</p>
-          <p className="flex items-center"><i className="fas fa-calendar-alt text-gray-500 mr-2"></i> <strong>Status:</strong> {property.readyOrOffPlan}</p>
-          <p className="flex items-center"><i className="fas fa-handshake text-gray-500 mr-2"></i> <strong>Handover:</strong> {property.handover}</p>
-          <p className="flex items-center"><i className="fas fa-tags text-gray-500 mr-2"></i> <strong>Purpose:</strong> {property.purposeOfListing}</p>
-          <p className="flex items-center"><i className="fas fa-couch text-gray-500 mr-2"></i> <strong>Furnished:</strong> {property.furnished ? 'Yes' : 'No'}</p>
-          <p className="flex items-center"><i className="fas fa-info-circle text-gray-500 mr-2"></i> <strong>Listing Status:</strong> {property.listingStatus}</p>
+          <p className="flex items-center"><i className="fas fa-building text-gray-500 mr-2"></i> <strong>Developer: </strong> {property.developer}</p>
+          <p className="flex items-center"><i className="fas fa-project-diagram text-gray-500 mr-2"></i> <strong>Project: </strong> {property.project}</p>
+          <p className="flex items-center"><i className="fas fa-home text-gray-500 mr-2"></i> <strong>Type: </strong> {property.propertyType}</p>
+          <p className="flex items-center"><i className="fas fa-bed text-gray-500 mr-2"></i> <strong>Bedrooms: </strong> {property.bedrooms}</p>
+          <p className="flex items-center"><i className="fas fa-ruler-combined text-gray-500 mr-2"></i> <strong>Size: </strong> {property.size}</p>
+          <p className="flex items-center"><i className="fas fa-chart-area text-gray-500 mr-2"></i> <strong>Plot Size: </strong> {property.plotSize}</p>
+          <p className="flex items-center"><i className="fas fa-calendar-alt text-gray-500 mr-2"></i> <strong>Status: </strong> {property.readyOrOffPlan}</p>
+          <p className="flex items-center"><i className="fas fa-handshake text-gray-500 mr-2"></i> <strong>Handover: </strong> {property.handover}</p>
+          <p className="flex items-center"><i className="fas fa-tags text-gray-500 mr-2"></i> <strong>Purpose: </strong> {property.purposeOfListing}</p>
+          <p className="flex items-center"><i className="fas fa-couch text-gray-500 mr-2"></i> <strong>Furnished: </strong> {property.furnished ? 'Yes' : 'No'}</p>
+          <p className="flex items-center"><i className="fas fa-info-circle text-gray-500 mr-2"></i> <strong>Listing Status: </strong> {property.listingStatus}</p>
         </div>
         <p className="text-gray-700 text-sm mb-3">{property.notes}</p>
       </div>
