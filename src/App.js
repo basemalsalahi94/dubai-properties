@@ -3,6 +3,7 @@ import './index.css'; // Ensure this is imported for Tailwind CSS if you have it
 
 // --- START: CONTENTFUL API CONFIGURATION ---
 // IMPORTANT: Replace with your actual Contentful Space ID and Access Token
+// If you haven't gotten these, go back to Contentful: Settings > API keys
 const CONTENTFUL_SPACE_ID = 'irpa9m1etdq6'; // e.g., 'abcdefg123hijk'
 const CONTENTFUL_ACCESS_TOKEN = 'ALd4e2VZj9_V3bVXpxIVCbjvrz1uBQEIH9IBhElroS4'; // e.g., 'xyzABC123_456def'
 
@@ -34,7 +35,7 @@ const PropertyCard = ({ property }) => (
           <p className="flex items-center"><i className="fas fa-calendar-alt text-gray-500 mr-2"></i> <strong>Status:</strong> {property.readyOrOffPlan}</p>
           <p className="flex items-center"><i className="fas fa-handshake text-gray-500 mr-2"></i> <strong>Handover:</strong> {property.handover}</p>
           <p className="flex items-center"><i className="fas fa-tags text-gray-500 mr-2"></i> <strong>Purpose:</strong> {property.purposeOfListing}</p>
-          <p className="flex items-center"><i className="fas fa-couch text-gray-500 mr-2"></i> <strong>Furnished:</strong> {property.furnished ? 'Yes' : 'No'}</p> {/* Contentful returns boolean */}
+          <p className="flex items-center"><i className="fas fa-couch text-gray-500 mr-2"></i> <strong>Furnished:</strong> {property.furnished ? 'Yes' : 'No'}</p>
           <p className="flex items-center"><i className="fas fa-info-circle text-gray-500 mr-2"></i> <strong>Listing Status:</strong> {property.listingStatus}</p>
         </div>
         <p className="text-gray-700 text-sm mb-3">{property.notes}</p>
@@ -49,7 +50,7 @@ const PropertyCard = ({ property }) => (
 function App() {
   const [listings, setListings] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('All'); // For 'Ready' or 'Off-Plan Resale'
+  const [filterStatus, setFilterStatus] = useState('All');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -62,15 +63,15 @@ function App() {
         }
         const data = await response.json();
 
-        // Process Contentful data to match our component's expected structure
         const fetchedListings = data.items.map(item => {
           const fields = item.fields;
-          const imageUrl = data.includes.Asset.find(
-            asset => asset.sys.id === fields.image.sys.id
+          // Find the asset for the image
+          const imageUrl = data.includes?.Asset?.find(
+            asset => asset.sys.id === fields.image?.sys.id
           )?.fields.file.url;
 
           return {
-            id: item.sys.id, // Contentful's unique ID for the entry
+            id: item.sys.id,
             title: fields.title,
             location: fields.location,
             developer: fields.developer,
@@ -86,20 +87,27 @@ function App() {
             furnished: fields.furnished,
             listingStatus: fields.listingStatus,
             notes: fields.notes,
-            imageUrl: imageUrl ? `https:${imageUrl}` : 'https://via.placeholder.com/400x300?text=No+Image', // Prepend https: for full URL
+            imageUrl: imageUrl ? `https:${imageUrl}` : 'https://via.placeholder.com/400x300?text=No+Image',
           };
         });
         setListings(fetchedListings);
       } catch (e) {
         console.error("Error fetching data from Contentful:", e);
-        setError("Failed to load listings. Please try again later.");
+        setError("Failed to load listings. Please try again later. Check your Contentful API keys.");
       } finally {
         setLoading(false);
       }
     };
 
+    // Only fetch if Contentful IDs are provided
+    if (CONTENTFUL_SPACE_ID === 'YOUR_CONTENTFUL_SPACE_ID' || CONTENTFUL_ACCESS_TOKEN === 'YOUR_CONTENTFUL_ACCESS_TOKEN') {
+      setError("Please replace 'YOUR_CONTENTFUL_SPACE_ID' and 'YOUR_CONTENTFUL_ACCESS_TOKEN' in src/App.js with your actual Contentful API keys.");
+      setLoading(false);
+      return;
+    }
+
     fetchListings();
-  }, []); // Empty dependency array means this runs once on component mount
+  }, []);
 
   const filteredListings = listings.filter(listing => {
     const matchesSearch = searchTerm === '' ||
@@ -125,7 +133,8 @@ function App() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-xl text-red-600">{error}</p>
+        <p className="text-xl text-red-600 font-bold text-center p-4">{error}</p>
+        <p className="text-md text-gray-700 text-center">Make sure you have published entries in Contentful and your API keys are correct.</p>
       </div>
     );
   }
@@ -134,10 +143,30 @@ function App() {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-indigo-700 text-white p-6 shadow-md">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-          <h1 className="text-3xl font-extrabold mb-4 md:mb-0">Dubai Property Listings</h1>
-          <nav className="space-x-4">
-            <a href="#listings" className="hover:underline">Listings</a>
-            <a href="#contact" className="hover:underline">Contact</a>
+          <div className="flex flex-col items-center md:items-start mb-4 md:mb-0">
+            <h1 className="text-3xl font-extrabold">Dubai Property Listings</h1>
+            <p className="text-lg mt-1">By Basem Al Salahi</p> {/* Add your name here */}
+          </div>
+          <nav className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+            <div className="flex space-x-4 text-2xl">
+              {/* Social Media Icons */}
+              <a href="https://www.instagram.com/basemrealestatedxb/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+                <i className="fab fa-instagram"></i>
+              </a>
+              <a href="https://www.tiktok.com/@basemrealestate" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+                <i className="fab fa-tiktok"></i>
+              </a>
+              <a href="https://www.linkedin.com/in/basem-alsalahi/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+                <i className="fab fa-linkedin"></i>
+              </a>
+              <a href="https://youtube.com/@basemdubiarealestateinsights?si=2EISgPZgjNL7IKmR" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+                <i className="fab fa-youtube"></i>
+              </a>
+            </div>
+            <div className="flex space-x-4">
+              <a href="#listings" className="hover:underline">Listings</a>
+              <a href="#contact" className="hover:underline">Contact</a>
+            </div>
           </nav>
         </div>
       </header>
@@ -160,7 +189,7 @@ function App() {
             >
               <option value="All">All Statuses</option>
               <option value="Ready">Ready</option>
-              <option value="Off-Plan Resale">Off-Plan Resale</option>
+              <option value="Off-plan">Off-plan</option> {/* Changed from 'Off-Plan Resale' */}
             </select>
           </div>
           <div className="grid grid-cols-1">
