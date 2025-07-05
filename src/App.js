@@ -46,11 +46,11 @@ const PropertyCard = ({ property }) => {
             )}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-gray-700 text-sm mb-3">
-            <p className="flex items-center"><i className="fas fa-building text-purple-500 mr-2"></i> <strong>Developer: " " </strong> {property.developer}</p>
-            <p className="flex items-center"><i className="fas fa-project-diagram text-teal-500 mr-2"></i> <strong>Project: </strong> {property.project}</p>
-            <p className="flex items-center"><i className="fas fa-home text-green-500 mr-2"></i> <strong>Type: </strong> {property.propertyType}</p>
-            <p className="flex items-center"><i className="fas fa-bed text-red-500 mr-2"></i> <strong>Bedrooms:</strong> {property.bedrooms}</p>
-            <p className="flex items-center"><i className="fas fa-ruler-combined text-yellow-500 mr-2"></i> <strong>Size:</strong> {property.size}</p>
+            <p className="flex items-center"><i className="fas fa-building text-purple-500 mr-2"></i> <strong>Developer:  </strong> {property.developer}</p>
+            <p className="flex items-center"><i className="fas fa-project-diagram text-teal-500 mr-2"></i> <strong>Project  </strong> {property.project}</p>
+            <p className="flex items-center"><i className="fas fa-home text-green-500 mr-2"></i> <strong>Type:   </strong> {property.propertyType}</p>
+            <p className="flex items-center"><i className="fas fa-bed text-red-500 mr-2"></i> <strong>Bedrooms:   </strong> {property.bedrooms}</p>
+            <p className="flex items-center"><i className="fas fa-ruler-combined text-yellow-500 mr-2"></i> <strong>Size:   </strong> {property.size}</p>
             <p className="flex items-center"><i className="fas fa-chart-area text-orange-500 mr-2"></i> <strong>Plot Size:</strong> {property.plotSize}</p>
             <p className="flex items-center"><i className="fas fa-calendar-alt text-indigo-500 mr-2"></i> <strong>Status:</strong> {property.readyOrOffPlan}</p>
             <p className="flex items-center"><i className="fas fa-handshake text-pink-500 mr-2"></i> <strong>Handover:</strong> {property.handover}</p>
