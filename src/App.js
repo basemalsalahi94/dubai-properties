@@ -256,7 +256,7 @@ function App() {
             As a licensed property consultant (RERA: 80450) in Dubai, I'm here to help you with your real estate needs.
           </p>
           <div className="flex justify-center space-x-6 text-xl">
-            <a href="mailto:your.email@example.com" className="text-indigo-600 hover:text-indigo-800 flex items-center">
+            <a href="mailto:basem@mhrealestate.ae" className="text-indigo-600 hover:text-indigo-800 flex items-center">
               <i className="fas fa-envelope mr-2"></i> Email Me
             </a>
             <a href="tel:+971501234567" className="text-indigo-600 hover:text-indigo-800 flex items-center">
