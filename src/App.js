@@ -46,7 +46,7 @@ const PropertyCard = ({ property }) => {
             )}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-gray-700 text-sm mb-3">
-            <p className="flex items-center"><i className="fas fa-building text-purple-500 mr-2"></i> <strong>Developer: </strong> {property.developer}</p>
+            <p className="flex items-center"><i className="fas fa-building text-purple-500 mr-2"></i> <strong>Developer: " " </strong> {property.developer}</p>
             <p className="flex items-center"><i className="fas fa-project-diagram text-teal-500 mr-2"></i> <strong>Project: </strong> {property.project}</p>
             <p className="flex items-center"><i className="fas fa-home text-green-500 mr-2"></i> <strong>Type: </strong> {property.propertyType}</p>
             <p className="flex items-center"><i className="fas fa-bed text-red-500 mr-2"></i> <strong>Bedrooms:</strong> {property.bedrooms}</p>
@@ -178,7 +178,7 @@ function App() {
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="flex flex-col items-center md:items-start mb-4 md:mb-0">
             <h1 className="text-3xl font-extrabold">Dubai Property Listings</h1>
-            <p className="text-lg mt-1">By [Your Name Here]</p> {/* Add your name here */}
+            <p className="text-lg mt-1">By Basem Al Salahi</p> {/* Add your name here */}
           </div>
           <nav className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
             <div className="flex space-x-4 text-2xl">
