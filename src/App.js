@@ -183,16 +183,16 @@ function App() {
           <nav className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
             <div className="flex space-x-4 text-2xl">
               {/* Social Media Icons */}
-              <a href="https://www.instagram.com/your_instagram_handle" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://www.instagram.com/basemrealestatedxb" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
                 <i className="fab fa-instagram"></i>
               </a>
-              <a href="https://www.tiktok.com/@your_tiktok_handle" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://www.tiktok.com/@basemrealestate" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
                 <i className="fab fa-tiktok"></i>
               </a>
-              <a href="https://www.linkedin.com/in/your_linkedin_profile" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://www.linkedin.com/in/basem-alsalahi" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
                 <i className="fab fa-linkedin"></i>
               </a>
-              <a href="https://www.youtube.com/your_youtube_channel" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://youtube.com/@basemdubiarealestateinsights?si=8j81ZQIEFpXoHcdV" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
                 <i className="fab fa-youtube"></i>
               </a>
             </div>
@@ -256,10 +256,10 @@ function App() {
             As a licensed property consultant (RERA: 80450) in Dubai, I'm here to help you with your real estate needs.
           </p>
           <div className="flex justify-center space-x-6 text-xl">
-            <a href="mailto:your.email@example.com" className="text-indigo-600 hover:text-indigo-800 flex items-center">
+            <a href="mailto:basem@mhrealestate.ae" className="text-indigo-600 hover:text-indigo-800 flex items-center">
               <i className="fas fa-envelope mr-2"></i> Email Me
             </a>
-            <a href="tel:+971501234567" className="text-indigo-600 hover:text-indigo-800 flex items-center">
+            <a href="tel:+971568722192" className="text-indigo-600 hover:text-indigo-800 flex items-center">
               <i className="fas fa-phone mr-2"></i> Call Me
             </a>
           </div>
