@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// import './index.css'; // Ensure this is imported for Tailwind CSS if you have it set up - REMOVED TO FIX RESOLUTION ERROR
+import './index.css'; // This import is necessary for local Tailwind CSS processing
 
 // --- START: CONTENTFUL API CONFIGURATION ---
 // IMPORTANT: Replace with your actual Contentful Space ID and Access Token
@@ -8,7 +8,7 @@ const CONTENTFUL_SPACE_ID = 'irpa9m1etdq6'; // e.g., 'abcdefg123hijk'
 const CONTENTFUL_ACCESS_TOKEN = 'ALd4e2VZj9_V3bVXpxIVCbjvrz1uBQEIH9IBhElroS4'; // e.g., 'xyzABC123_456def'
 
 const CONTENTFUL_API_URL = `https://cdn.contentful.com/spaces/${CONTENTFUL_SPACE_ID}/environments/master/entries?access_token=${CONTENTFUL_ACCESS_TOKEN}&content_type=property`;
-// --- END: CONTENTFUL_API_URL ---
+// --- END: CONTENTFUL API CONFIGURATION ---
 
 const PropertyCard = ({ property }) => {
   // Determine the Google Maps URL based on available data
@@ -72,25 +72,37 @@ function App() {
   const [listings, setListings] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
-  const [minPrice, setMinPrice] = useState(''); // New state for min price
-  const [maxPrice, setMaxPrice] = useState(''); // New state for max price
-  const [propertyTypeFilter, setPropertyTypeFilter] = useState('All'); // New state for property type filter
-  const [bedroomsFilter, setBedroomsFilter] = useState('All'); // New state for bedrooms filter
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState('All');
+  const [bedroomsFilter, setBedroomsFilter] = useState('All');
+  
+  // Removed pagination states (currentPage, totalListings)
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Removed skip calculation
+
   useEffect(() => {
     const fetchListings = async () => {
+      setLoading(true); // Set loading true before fetch
+      setError(null); // Clear previous errors
+
+      // API URL without limit and skip for pagination
+      const fullApiUrl = `${CONTENTFUL_API_URL}`; // Fetch all listings
+
       try {
-        const response = await fetch(CONTENTFUL_API_URL);
+        const response = await fetch(fullApiUrl);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
 
+        // Removed totalListings update
+
         const fetchedListings = data.items.map(item => {
           const fields = item.fields;
-          // Find the asset for the image
           const imageUrl = data.includes?.Asset?.find(
             asset => asset.sys.id === fields.image?.sys.id
           )?.fields.file.url;
@@ -108,13 +120,13 @@ function App() {
             readyOrOffPlan: fields.readyOrOffPlan,
             handover: fields.handover,
             purposeOfListing: fields.purposeOfListing,
-            price: fields.price, // Keep original string for display
+            price: fields.price,
             numericPrice: parseFloat(String(fields.price || '').replace(/[^0-9.]/g, '')),
             furnished: fields.furnished,
             listingStatus: fields.listingStatus,
-            note: fields.note, // Changed from 'notes' to 'note' to match your API ID
+            note: fields.note,
             imageUrl: imageUrl ? `https:${imageUrl}` : 'https://via.placeholder.com/400x300?text=No+Image',
-            googleMapsLink: fields.googleMapsLink, // Read the direct Google Maps link
+            googleMapsLink: fields.googleMapsLink,
           };
         });
         setListings(fetchedListings);
@@ -126,7 +138,6 @@ function App() {
       }
     };
 
-    // Only fetch if Contentful IDs are provided
     if (CONTENTFUL_SPACE_ID === 'YOUR_CONTENTFUL_SPACE_ID' || CONTENTFUL_ACCESS_TOKEN === 'YOUR_CONTENTFUL_ACCESS_TOKEN') {
       setError("Please replace 'YOUR_CONTENTFUL_SPACE_ID' and 'YOUR_CONTENTFUL_ACCESS_TOKEN' in src/App.js with your actual Contentful API keys.");
       setLoading(false);
@@ -134,7 +145,7 @@ function App() {
     }
 
     fetchListings();
-  }, []);
+  }, []); // Dependencies changed to only trigger on mount
 
   const filteredListings = listings.filter(listing => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -143,8 +154,7 @@ function App() {
       (listing.location || '').toLowerCase().includes(lowerCaseSearchTerm) ||
       (listing.developer || '').toLowerCase().includes(lowerCaseSearchTerm) ||
       (listing.project || '').toLowerCase().includes(lowerCaseSearchTerm) ||
-      (listing.note || '').toLowerCase().includes(lowerCaseSearchTerm); // Changed from 'notes' to 'note' for search
-
+      (listing.note || '').toLowerCase().includes(lowerCaseSearchTerm);
 
     const matchesStatus = filterStatus === 'All' || listing.readyOrOffPlan === filterStatus;
 
@@ -154,17 +164,18 @@ function App() {
     const matchesMinPrice = isNaN(numericMinPrice) || (listing.numericPrice !== undefined && listing.numericPrice >= numericMinPrice);
     const matchesMaxPrice = isNaN(numericMaxPrice) || (listing.numericPrice !== undefined && listing.numericPrice <= numericMaxPrice);
 
-    // New filter conditions for Property Type and Bedrooms
     const matchesPropertyType = propertyTypeFilter === 'All' ||
       (listing.propertyType || '').toLowerCase() === propertyTypeFilter.toLowerCase();
 
     const matchesBedrooms = bedroomsFilter === 'All' ||
-      (bedroomsFilter === 'Studio' && (listing.bedrooms === 0 || String(listing.bedrooms).toLowerCase() === 'studio')) || // Handle 'Studio' as 0 or string
-      (bedroomsFilter !== 'Studio' && parseInt(bedroomsFilter) === parseInt(String(listing.bedrooms || ''))); // Ensure both are numbers for comparison
-
+      (bedroomsFilter === 'Studio' && (listing.bedrooms === 0 || String(listing.bedrooms).toLowerCase() === 'studio')) ||
+      (bedroomsFilter !== 'Studio' && parseInt(bedroomsFilter) === parseInt(String(listing.bedrooms || '')));
 
     return matchesSearch && matchesStatus && matchesMinPrice && matchesMaxPrice && matchesPropertyType && matchesBedrooms;
   });
+
+  // Removed totalPages calculation
+  // Removed handleNextPage and handlePrevPage functions
 
   if (loading) {
     return (
@@ -189,11 +200,10 @@ function App() {
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="flex flex-col items-center md:items-start mb-4 md:mb-0">
             <h1 className="text-3xl font-extrabold">Dubai Property Listings</h1>
-            <p className="text-lg mt-1">By Basem Al Salahi</p> {/* Add your name here */}
+            <p className="text-lg mt-1">By Basem Al Salahi</p>
           </div>
           <nav className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
             <div className="flex space-x-4 text-2xl">
-              {/* Social Media Icons */}
               <a href="https://www.instagram.com/basemrealestatedxb" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
                 <i className="fab fa-instagram"></i>
               </a>
@@ -218,7 +228,7 @@ function App() {
       <main className="container mx-auto p-6">
         <section id="listings" className="mb-10">
           <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Available Properties</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6"> {/* Adjusted grid for more filters */}
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
             <input
               type="text"
               placeholder="Search by title, location, developer, project, or notes..."
@@ -246,24 +256,6 @@ function App() {
               <option value="Villa">Villa</option>
               <option value="Plot">Plot</option>
               <option value="Building">Building</option>
-            </select>
-            <select
-              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              value={bedroomsFilter}
-              onChange={(e) => setBedroomsFilter(e.target.value)}
-            >
-              <option value="All">All Bedrooms</option>
-              <option value="Studio">Studio</option>
-              <option value="1">1 Bedroom</option>
-              <option value="2">2 Bedrooms</option>
-              <option value="3">3 Bedrooms</option>
-              <option value="4">4 Bedrooms</option>
-              <option value="5">5 Bedrooms</option>
-              <option value="6">6 Bedrooms</option>
-              <option value="7">7 Bedrooms</option>
-              <option value="8">8 Bedrooms</option>
-              <option value="9">9 Bedrooms</option>
-              <option value="10">10 Bedrooms</option>
             </select>
             <input
               type="number"
