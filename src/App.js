@@ -76,20 +76,16 @@ function App() {
   const [maxPrice, setMaxPrice] = useState('');
   const [propertyTypeFilter, setPropertyTypeFilter] = useState('All');
   const [bedroomsFilter, setBedroomsFilter] = useState('All');
+  const [developerFilter, setDeveloperFilter] = useState('All'); // New state for developer filter
   
-  // Removed pagination states (currentPage, totalListings)
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Removed skip calculation
 
   useEffect(() => {
     const fetchListings = async () => {
       setLoading(true); // Set loading true before fetch
       setError(null); // Clear previous errors
 
-      // API URL without limit and skip for pagination
       const fullApiUrl = `${CONTENTFUL_API_URL}`; // Fetch all listings
 
       try {
@@ -98,8 +94,6 @@ function App() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-
-        // Removed totalListings update
 
         const fetchedListings = data.items.map(item => {
           const fields = item.fields;
@@ -147,6 +141,9 @@ function App() {
     fetchListings();
   }, []); // Dependencies changed to only trigger on mount
 
+  // Extract unique developers for the filter dropdown
+  const uniqueDevelopers = [...new Set(listings.map(listing => listing.developer).filter(Boolean))].sort();
+
   const filteredListings = listings.filter(listing => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
     const matchesSearch = lowerCaseSearchTerm === '' ||
@@ -171,11 +168,12 @@ function App() {
       (bedroomsFilter === 'Studio' && (listing.bedrooms === 0 || String(listing.bedrooms).toLowerCase() === 'studio')) ||
       (bedroomsFilter !== 'Studio' && parseInt(bedroomsFilter) === parseInt(String(listing.bedrooms || '')));
 
-    return matchesSearch && matchesStatus && matchesMinPrice && matchesMaxPrice && matchesPropertyType && matchesBedrooms;
-  });
+    const matchesDeveloper = developerFilter === 'All' ||
+      (listing.developer || '').toLowerCase() === developerFilter.toLowerCase();
 
-  // Removed totalPages calculation
-  // Removed handleNextPage and handlePrevPage functions
+
+    return matchesSearch && matchesStatus && matchesMinPrice && matchesMaxPrice && matchesPropertyType && matchesBedrooms && matchesDeveloper;
+  });
 
   if (loading) {
     return (
@@ -256,6 +254,35 @@ function App() {
               <option value="Villa">Villa</option>
               <option value="Plot">Plot</option>
               <option value="Building">Building</option>
+            </select>
+            <select
+              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              value={bedroomsFilter}
+              onChange={(e) => setBedroomsFilter(e.target.value)}
+            >
+              <option value="All">All Bedrooms</option>
+              <option value="Studio">Studio</option>
+              <option value="1">1 Bedroom</option>
+              <option value="2">2 Bedrooms</option>
+              <option value="3">3 Bedrooms</option>
+              <option value="4">4 Bedrooms</option>
+              <option value="5">5 Bedrooms</option>
+              <option value="6">6 Bedrooms</option>
+              <option value="7">7 Bedrooms</option>
+              <option value="8">8 Bedrooms</option>
+              <option value="9">9 Bedrooms</option>
+              <option value="10">10 Bedrooms</option>
+            </select>
+            {/* New Developer Filter Dropdown */}
+            <select
+              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              value={developerFilter}
+              onChange={(e) => setDeveloperFilter(e.target.value)}
+            >
+              <option value="All">All Developers</option>
+              {uniqueDevelopers.map(developer => (
+                <option key={developer} value={developer}>{developer}</option>
+              ))}
             </select>
             <input
               type="number"
