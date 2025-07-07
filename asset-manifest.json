@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/dubai-properties/static/css/main.e6c13ad2.css",
-    "main.js": "/dubai-properties/static/js/main.725bd311.js",
+    "main.js": "/dubai-properties/static/js/main.c25a541f.js",
     "index.html": "/dubai-properties/index.html",
     "main.e6c13ad2.css.map": "/dubai-properties/static/css/main.e6c13ad2.css.map",
-    "main.725bd311.js.map": "/dubai-properties/static/js/main.725bd311.js.map"
+    "main.c25a541f.js.map": "/dubai-properties/static/js/main.c25a541f.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.725bd311.js"
+    "static/js/main.c25a541f.js"
   ]
 }
