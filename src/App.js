@@ -21,7 +21,7 @@ const PropertyCard = ({ property }) => {
     <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row mb-6">
       <div className="md:w-1/3">
         <img
-          src={property.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'}
+          src={property.imageUrl || 'https://placehold.co/400x300/000000/FFFFFF?text=No+Image'} // Updated placeholder image URL
           alt={property.title}
           className="w-full h-48 object-cover md:h-full"
         />
@@ -77,10 +77,25 @@ function App() {
   const [propertyTypeFilter, setPropertyTypeFilter] = useState('All');
   const [bedroomsFilter, setBedroomsFilter] = useState('All');
   const [developerFilter, setDeveloperFilter] = useState('All');
-  const [purposeFilter, setPurposeFilter] = useState('All'); // New state for purpose filter
+  const [purposeFilter, setPurposeFilter] = useState('All');
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Function to send custom events to Google Analytics
+  const trackSocialClick = (platform) => {
+    // Check if gtag is loaded before trying to use it
+    if (window.gtag) {
+      window.gtag('event', 'social_media_click', {
+        event_category: 'Engagement',
+        event_label: `Clicked on ${platform} link`,
+        value: platform,
+      });
+      console.log(`Tracking social media click: ${platform}`); // For debugging
+    } else {
+      console.warn('Google Analytics gtag not loaded. Social media click not tracked.');
+    }
+  };
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -120,7 +135,7 @@ function App() {
             furnished: fields.furnished,
             listingStatus: fields.listingStatus,
             note: fields.note,
-            imageUrl: imageUrl ? `https:${imageUrl}` : 'https://via.placeholder.com/400x300?text=No+Image',
+            imageUrl: imageUrl ? `https:${imageUrl}` : 'https://placehold.co/400x300/000000/FFFFFF?text=No+Image', // Updated placeholder image URL
             googleMapsLink: fields.googleMapsLink,
           };
         });
@@ -144,7 +159,7 @@ function App() {
 
   // Extract unique filter options
   const uniqueDevelopers = [...new Set(listings.map(listing => listing.developer).filter(Boolean))].sort();
-  const uniquePurposes = [...new Set(listings.map(listing => listing.purposeOfListing).filter(Boolean))].sort(); // New: Extract unique purposes
+  const uniquePurposes = [...new Set(listings.map(listing => listing.purposeOfListing).filter(Boolean))].sort();
 
   const filteredListings = listings.filter(listing => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -173,7 +188,7 @@ function App() {
     const matchesDeveloper = developerFilter === 'All' ||
       (listing.developer || '').toLowerCase() === developerFilter.toLowerCase();
     
-    const matchesPurpose = purposeFilter === 'All' || // New: Filter by purpose
+    const matchesPurpose = purposeFilter === 'All' ||
       (listing.purposeOfListing || '').toLowerCase() === purposeFilter.toLowerCase();
 
     return matchesSearch && matchesStatus && matchesMinPrice && matchesMaxPrice && matchesPropertyType && matchesBedrooms && matchesDeveloper && matchesPurpose;
@@ -204,18 +219,19 @@ function App() {
             <h1 className="text-3xl font-extrabold">Dubai Property Listings</h1>
             <p className="text-lg mt-1">By Basem Al Salahi</p>
           </div>
-          <nav className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+          <nav className="flex flex-col md:flex-row justify-end items-center space-y-4 md:space-y-0 md:space-x-6"> {/* Added justify-end for right alignment */}
             <div className="flex space-x-4 text-2xl">
-              <a href="https://www.instagram.com/basemrealestatedxb" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              {/* Social Media Icons with onClick tracking */}
+              <a href="https://www.instagram.com/basemrealestatedxb" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300" onClick={() => trackSocialClick('Instagram')}>
                 <i className="fab fa-instagram"></i>
               </a>
-              <a href="https://www.tiktok.com/@basemrealestate" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://www.tiktok.com/@basemrealestate" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300" onClick={() => trackSocialClick('TikTok')}>
                 <i className="fab fa-tiktok"></i>
               </a>
-              <a href="https://www.linkedin.com/in/basem-alsalahi" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://www.linkedin.com/in/basem-alsalahi" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300" onClick={() => trackSocialClick('LinkedIn')}>
                 <i className="fab fa-linkedin"></i>
               </a>
-              <a href="https://youtube.com/@basemdubiarealestateinsights?si=8j81ZQIEFpXoHcdV" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+              <a href="https://youtube.com/@basemdubiarealestateinsights?si=8j81ZQIEFpXoHcdV" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300" onClick={() => trackSocialClick('YouTube')}>
                 <i className="fab fa-youtube"></i>
               </a>
             </div>
