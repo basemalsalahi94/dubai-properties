@@ -76,17 +76,18 @@ function App() {
   const [maxPrice, setMaxPrice] = useState('');
   const [propertyTypeFilter, setPropertyTypeFilter] = useState('All');
   const [bedroomsFilter, setBedroomsFilter] = useState('All');
-  const [developerFilter, setDeveloperFilter] = useState('All'); // New state for developer filter
+  const [developerFilter, setDeveloperFilter] = useState('All');
+  const [purposeFilter, setPurposeFilter] = useState('All'); // New state for purpose filter
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchListings = async () => {
-      setLoading(true); // Set loading true before fetch
-      setError(null); // Clear previous errors
+      setLoading(true);
+      setError(null);
 
-      const fullApiUrl = `${CONTENTFUL_API_URL}`; // Fetch all listings
+      const fullApiUrl = `${CONTENTFUL_API_URL}`;
 
       try {
         const response = await fetch(fullApiUrl);
@@ -139,10 +140,11 @@ function App() {
     }
 
     fetchListings();
-  }, []); // Dependencies changed to only trigger on mount
+  }, []);
 
-  // Extract unique developers for the filter dropdown
+  // Extract unique filter options
   const uniqueDevelopers = [...new Set(listings.map(listing => listing.developer).filter(Boolean))].sort();
+  const uniquePurposes = [...new Set(listings.map(listing => listing.purposeOfListing).filter(Boolean))].sort(); // New: Extract unique purposes
 
   const filteredListings = listings.filter(listing => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -170,9 +172,11 @@ function App() {
 
     const matchesDeveloper = developerFilter === 'All' ||
       (listing.developer || '').toLowerCase() === developerFilter.toLowerCase();
+    
+    const matchesPurpose = purposeFilter === 'All' || // New: Filter by purpose
+      (listing.purposeOfListing || '').toLowerCase() === purposeFilter.toLowerCase();
 
-
-    return matchesSearch && matchesStatus && matchesMinPrice && matchesMaxPrice && matchesPropertyType && matchesBedrooms && matchesDeveloper;
+    return matchesSearch && matchesStatus && matchesMinPrice && matchesMaxPrice && matchesPropertyType && matchesBedrooms && matchesDeveloper && matchesPurpose;
   });
 
   if (loading) {
@@ -273,7 +277,6 @@ function App() {
               <option value="9">9 Bedrooms</option>
               <option value="10">10 Bedrooms</option>
             </select>
-            {/* New Developer Filter Dropdown */}
             <select
               className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               value={developerFilter}
@@ -282,6 +285,17 @@ function App() {
               <option value="All">All Developers</option>
               {uniqueDevelopers.map(developer => (
                 <option key={developer} value={developer}>{developer}</option>
+              ))}
+            </select>
+            {/* New Purpose Filter Dropdown */}
+            <select
+              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              value={purposeFilter}
+              onChange={(e) => setPurposeFilter(e.target.value)}
+            >
+              <option value="All">All Purposes</option>
+              {uniquePurposes.map(purpose => (
+                <option key={purpose} value={purpose}>{purpose}</option>
               ))}
             </select>
             <input
