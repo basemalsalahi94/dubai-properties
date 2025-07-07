@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './index.css'; // Ensure this is imported for Tailwind CSS if you have it set up
+import './index.css'; // This import is necessary for local Tailwind CSS processing
 
 // --- START: CONTENTFUL API CONFIGURATION ---
 // IMPORTANT: Replace with your actual Contentful Space ID and Access Token
@@ -42,15 +42,15 @@ const PropertyCard = ({ property }) => {
                 {property.location || 'View on Map'} {/* Display location text or 'View on Map' */}
               </a>
             ) : (
-              'N/A' // Display N/A if no location data at all
+              property.location || 'N/A' // Display N/A if no location data at all
             )}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-gray-700 text-sm mb-3">
-            <p className="flex items-center"><i className="fas fa-building text-purple-500 mr-2"></i> <strong>Developer:  </strong> {property.developer}</p>
-            <p className="flex items-center"><i className="fas fa-project-diagram text-teal-500 mr-2"></i> <strong>Project  </strong> {property.project}</p>
-            <p className="flex items-center"><i className="fas fa-home text-green-500 mr-2"></i> <strong>Type:   </strong> {property.propertyType}</p>
-            <p className="flex items-center"><i className="fas fa-bed text-red-500 mr-2"></i> <strong>Bedrooms:   </strong> {property.bedrooms}</p>
-            <p className="flex items-center"><i className="fas fa-ruler-combined text-yellow-500 mr-2"></i> <strong>Size:   </strong> {property.size}</p>
+            <p className="flex items-center"><i className="fas fa-building text-purple-500 mr-2"></i> <strong>Developer: </strong> {property.developer}</p>
+            <p className="flex items-center"><i className="fas fa-project-diagram text-teal-500 mr-2"></i> <strong>Project: </strong> {property.project}</p>
+            <p className="flex items-center"><i className="fas fa-home text-green-500 mr-2"></i> <strong>Type: </strong> {property.propertyType}</p>
+            <p className="flex items-center"><i className="fas fa-bed text-red-500 mr-2"></i> <strong>Bedrooms: </strong> {property.bedrooms}</p>
+            <p className="flex items-center"><i className="fas fa-ruler-combined text-yellow-500 mr-2"></i> <strong>Size: </strong> {property.size}</p>
             <p className="flex items-center"><i className="fas fa-chart-area text-orange-500 mr-2"></i> <strong>Plot Size:</strong> {property.plotSize}</p>
             <p className="flex items-center"><i className="fas fa-calendar-alt text-indigo-500 mr-2"></i> <strong>Status:</strong> {property.readyOrOffPlan}</p>
             <p className="flex items-center"><i className="fas fa-handshake text-pink-500 mr-2"></i> <strong>Handover:</strong> {property.handover}</p>
@@ -58,7 +58,7 @@ const PropertyCard = ({ property }) => {
             <p className="flex items-center"><i className="fas fa-couch text-lime-500 mr-2"></i> <strong>Furnished:</strong> {property.furnished ? 'Yes' : 'No'}</p>
             <p className="flex items-center"><i className="fas fa-info-circle text-gray-500 mr-2"></i> <strong>Listing Status:</strong> {property.listingStatus}</p>
           </div>
-          <p className="text-gray-700 text-sm mb-3">{property.notes}</p>
+          <p className="text-gray-700 text-sm mb-3"><strong>Note: </strong> {property.note || 'No additional notes.'}</p>
         </div>
         <div className="mt-auto text-right">
           <p className="text-2xl font-bold text-indigo-700">AED {property.price}</p>
@@ -74,6 +74,8 @@ function App() {
   const [filterStatus, setFilterStatus] = useState('All');
   const [minPrice, setMinPrice] = useState(''); // New state for min price
   const [maxPrice, setMaxPrice] = useState(''); // New state for max price
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState('All'); // New state for property type filter
+  const [bedroomsFilter, setBedroomsFilter] = useState('All'); // New state for bedrooms filter
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -110,9 +112,8 @@ function App() {
             numericPrice: parseFloat(String(fields.price || '').replace(/[^0-9.]/g, '')),
             furnished: fields.furnished,
             listingStatus: fields.listingStatus,
-            notes: fields.notes,
+            note: fields.note, // Changed from 'notes' to 'note' to match your API ID
             imageUrl: imageUrl ? `https:${imageUrl}` : 'https://via.placeholder.com/400x300?text=No+Image',
-            // Removed latitude and longitude from here
             googleMapsLink: fields.googleMapsLink, // Read the direct Google Maps link
           };
         });
@@ -142,7 +143,8 @@ function App() {
       (listing.location || '').toLowerCase().includes(lowerCaseSearchTerm) ||
       (listing.developer || '').toLowerCase().includes(lowerCaseSearchTerm) ||
       (listing.project || '').toLowerCase().includes(lowerCaseSearchTerm) ||
-      (listing.notes || '').toLowerCase().includes(lowerCaseSearchTerm);
+      (listing.note || '').toLowerCase().includes(lowerCaseSearchTerm); // Changed from 'notes' to 'note' for search
+
 
     const matchesStatus = filterStatus === 'All' || listing.readyOrOffPlan === filterStatus;
 
@@ -152,7 +154,16 @@ function App() {
     const matchesMinPrice = isNaN(numericMinPrice) || (listing.numericPrice !== undefined && listing.numericPrice >= numericMinPrice);
     const matchesMaxPrice = isNaN(numericMaxPrice) || (listing.numericPrice !== undefined && listing.numericPrice <= numericMaxPrice);
 
-    return matchesSearch && matchesStatus && matchesMinPrice && matchesMaxPrice;
+    // New filter conditions for Property Type and Bedrooms
+    const matchesPropertyType = propertyTypeFilter === 'All' ||
+      (listing.propertyType || '').toLowerCase() === propertyTypeFilter.toLowerCase();
+
+    const matchesBedrooms = bedroomsFilter === 'All' ||
+      (bedroomsFilter === 'Studio' && (listing.bedrooms === 0 || String(listing.bedrooms).toLowerCase() === 'studio')) || // Handle 'Studio' as 0 or string
+      (bedroomsFilter !== 'Studio' && parseInt(bedroomsFilter) === parseInt(String(listing.bedrooms || ''))); // Ensure both are numbers for comparison
+
+
+    return matchesSearch && matchesStatus && matchesMinPrice && matchesMaxPrice && matchesPropertyType && matchesBedrooms;
   });
 
   if (loading) {
@@ -207,7 +218,7 @@ function App() {
       <main className="container mx-auto p-6">
         <section id="listings" className="mb-10">
           <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Available Properties</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6"> {/* Adjusted grid for more filters */}
             <input
               type="text"
               placeholder="Search by title, location, developer, project, or notes..."
@@ -223,6 +234,18 @@ function App() {
               <option value="All">All Statuses</option>
               <option value="Ready">Ready</option>
               <option value="Off-plan">Off-plan</option>
+            </select>
+            <select
+              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              value={propertyTypeFilter}
+              onChange={(e) => setPropertyTypeFilter(e.target.value)}
+            >
+              <option value="All">All Property Types</option>
+              <option value="Townhouse">Townhouse</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Villa">Villa</option>
+              <option value="Plot">Plot</option>
+              <option value="Building">Building</option>
             </select>
             <input
               type="number"
@@ -271,7 +294,7 @@ function App() {
 
       <footer className="bg-gray-800 text-white p-4 text-center mt-10">
         <div className="container mx-auto">
-          <p>&copy; {new Date().getFullYear()} Dubai Property Listings. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Dubai Property Listings. All rights reserved.</p>
         </div>
       </footer>
     </div>
