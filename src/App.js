@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './index.css'; // This import is necessary for local Tailwind CSS processing
+// import './index.css'; // Ensure this is imported for Tailwind CSS if you have it set up - REMOVED TO FIX RESOLUTION ERROR
 
 // --- START: CONTENTFUL API CONFIGURATION ---
 // IMPORTANT: Replace with your actual Contentful Space ID and Access Token
@@ -8,7 +8,7 @@ const CONTENTFUL_SPACE_ID = 'irpa9m1etdq6'; // e.g., 'abcdefg123hijk'
 const CONTENTFUL_ACCESS_TOKEN = 'ALd4e2VZj9_V3bVXpxIVCbjvrz1uBQEIH9IBhElroS4'; // e.g., 'xyzABC123_456def'
 
 const CONTENTFUL_API_URL = `https://cdn.contentful.com/spaces/${CONTENTFUL_SPACE_ID}/environments/master/entries?access_token=${CONTENTFUL_ACCESS_TOKEN}&content_type=property`;
-// --- END: CONTENTFUL API CONFIGURATION ---
+// --- END: CONTENTFUL_API_URL ---
 
 const PropertyCard = ({ property }) => {
   // Determine the Google Maps URL based on available data
@@ -246,6 +246,24 @@ function App() {
               <option value="Villa">Villa</option>
               <option value="Plot">Plot</option>
               <option value="Building">Building</option>
+            </select>
+            <select
+              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              value={bedroomsFilter}
+              onChange={(e) => setBedroomsFilter(e.target.value)}
+            >
+              <option value="All">All Bedrooms</option>
+              <option value="Studio">Studio</option>
+              <option value="1">1 Bedroom</option>
+              <option value="2">2 Bedrooms</option>
+              <option value="3">3 Bedrooms</option>
+              <option value="4">4 Bedrooms</option>
+              <option value="5">5 Bedrooms</option>
+              <option value="6">6 Bedrooms</option>
+              <option value="7">7 Bedrooms</option>
+              <option value="8">8 Bedrooms</option>
+              <option value="9">9 Bedrooms</option>
+              <option value="10">10 Bedrooms</option>
             </select>
             <input
               type="number"
