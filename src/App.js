@@ -234,6 +234,10 @@ function App() {
               <a href="https://youtube.com/@basemdubiarealestateinsights?si=8j81ZQIEFpXoHcdV" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300" onClick={() => trackSocialClick('YouTube')}>
                 <i className="fab fa-youtube"></i>
               </a>
+               {/* WhatsApp Icon with onClick tracking */}
+              <a href="https://wa.me/971568722192" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300" onClick={() => trackSocialClick('WhatsApp')}>
+                <i className="fab fa-whatsapp"></i>
+              </a>
             </div>
             <div className="flex space-x-4">
               <a href="#listings" className="hover:underline">Listings</a>
